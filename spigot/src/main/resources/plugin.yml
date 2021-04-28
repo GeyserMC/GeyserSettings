@@ -1,0 +1,6 @@
+name: GeyserSettings
+version: ${project.version}
+main: org.geysermc.geysersettings.spigot.GeyserSettingsSpigot
+api-version: 1.16
+authors: [ GeyserMC ]
+website: https://geysermc.org

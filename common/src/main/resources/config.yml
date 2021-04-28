@@ -1,0 +1,2 @@
+# If true, Geyser players will be unable to perform their special scaffolding/speedbridging
+disable-bedrock-scaffolding: true
