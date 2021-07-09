@@ -30,7 +30,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRegisterChannelEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.geysermc.geysersettings.common.Config;
+import org.geysermc.geysersettings.common.config.GeyserSettingsConfig;
 import org.geysermc.geysersettings.common.Constants;
 import org.geysermc.geysersettings.common.GeyserSettings;
 
@@ -39,7 +39,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public final class GeyserSettingsSpigot extends JavaPlugin implements Listener {
-    private Config config;
+    private GeyserSettingsConfig config;
     private GeyserSettings geyserSettings;
 
     @Override
@@ -70,7 +70,11 @@ public final class GeyserSettingsSpigot extends JavaPlugin implements Listener {
     @EventHandler
     public void onPluginMessageRegister(PlayerRegisterChannelEvent event) {
         if (event.getChannel().equals(Constants.PLUGIN_MESSAGE_IDENTIFIER)) {
-            String message = this.geyserSettings.sendSettings(Config.toSettings(config));
+            if (config.getKickSettings().shouldKick()) {
+                event.getPlayer().kickPlayer(config.getKickSettings().getKickMessage());
+                return;
+            }
+            String message = this.geyserSettings.sendSettings(config.getGeyserSettings());
             event.getPlayer().sendPluginMessage(this, Constants.PLUGIN_MESSAGE_IDENTIFIER, message.getBytes(StandardCharsets.UTF_8));
         }
     }

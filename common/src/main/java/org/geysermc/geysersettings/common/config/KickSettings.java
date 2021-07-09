@@ -23,17 +23,37 @@
  * @link https://github.com/GeyserMC/Geyser
  */
 
-package org.geysermc.geysersettings.common;
+package org.geysermc.geysersettings.common.config;
 
-public interface Config {
-    boolean disableScaffolding();
+import com.fasterxml.jackson.databind.JsonNode;
 
-    /**
-     * @return the config values in a mutable form
-     */
-    static Settings toSettings(Config config) {
-        Settings settings = new Settings();
-        settings.setDisableScaffolding(config.disableScaffolding());
-        return settings;
+public class KickSettings {
+    private final boolean doKick;
+    private final String message;
+
+    public KickSettings(JsonNode node) {
+        JsonNode allowBedrockPlayers = node.get("allow-bedrock-players");
+        if (allowBedrockPlayers != null) {
+            this.doKick = !allowBedrockPlayers.booleanValue();
+        } else {
+            this.doKick = false;
+            this.message = null;
+            return;
+        }
+
+        JsonNode message = node.get("kick-message");
+        if (message != null) {
+            this.message = message.asText();
+        } else {
+            this.message = "";
+        }
+    }
+
+    public boolean shouldKick() {
+        return doKick;
+    }
+
+    public String getKickMessage() {
+        return message;
     }
 }

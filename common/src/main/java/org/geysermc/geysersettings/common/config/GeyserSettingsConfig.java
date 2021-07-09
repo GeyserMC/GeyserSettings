@@ -23,16 +23,26 @@
  * @link https://github.com/GeyserMC/Geyser
  */
 
-package org.geysermc.geysersettings.common;
+package org.geysermc.geysersettings.common.config;
 
-public class Settings {
-    private boolean disableScaffolding;
+import org.geysermc.geysersettings.common.GeyserSetting;
 
-    public boolean isDisableScaffolding() {
-        return disableScaffolding;
+import java.util.List;
+
+public class GeyserSettingsConfig {
+    private final KickSettings kickSettings;
+    private final List<GeyserSetting> geyserSettings;
+
+    public GeyserSettingsConfig(KickSettings kickSettings, List<GeyserSetting> geyserSettings) {
+        this.kickSettings = kickSettings;
+        this.geyserSettings = geyserSettings;
     }
 
-    public void setDisableScaffolding(boolean disableScaffolding) {
-        this.disableScaffolding = disableScaffolding;
+    public KickSettings getKickSettings() {
+        return kickSettings;
+    }
+
+    public List<GeyserSetting> getGeyserSettings() {
+        return geyserSettings;
     }
 }

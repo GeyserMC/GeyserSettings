@@ -1,2 +1,14 @@
-# If true, Geyser players will be unable to perform their special scaffolding/speedbridging
-disable-bedrock-scaffolding: true
+#allow-bedrock-players: true
+#kick-message: Please join from a Java Edition client!
+
+# GeyserSettingType will be ignored if they are uncommented, and the Bedrock player's Geyser instance will have full control
+# over that setting.
+# Uncommenting a setting will send that value to all
+settings:
+  # If true, Geyser players will be unable to perform their special scaffolding/speedbridging
+  # Do note that this isn't a replacement for anticheat - it should be treated as an indication to Bedrock players
+  # that scaffolding will not work.
+  disable-bedrock-scaffolding: true
+  # Set if players should have a cooldown
+  # Leave uncommented as nothing, true as forced on, and false as forced off
+  #show-cooldown: true

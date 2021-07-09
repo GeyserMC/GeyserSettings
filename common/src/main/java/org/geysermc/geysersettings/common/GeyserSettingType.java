@@ -25,15 +25,34 @@
 
 package org.geysermc.geysersettings.common;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.HashMap;
+import java.util.Map;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class ServerConfig implements Config {
-    @JsonProperty("disable-bedrock-scaffolding")
-    private boolean disableScaffolding = false;
+public enum GeyserSettingType {
+    DISABLE_BEDROCK_SCAFFOLDING("disable-bedrock-scaffolding", Boolean.class),
+    SHOW_COOLDOWN("show-cooldown", Boolean.class);
 
-    public boolean disableScaffolding() {
-        return disableScaffolding;
+    private final String serializationName;
+    private final Class<?> serializationType;
+
+    public static final Map<String, GeyserSettingType> ALL_SETTINGS = new HashMap<>();
+
+    static {
+        for (GeyserSettingType settingType : values()) {
+            ALL_SETTINGS.put(settingType.serializationName, settingType);
+        }
+    }
+
+    GeyserSettingType(String serializationName, Class<?> serializationType) {
+        this.serializationName = serializationName;
+        this.serializationType = serializationType;
+    }
+
+    public String getSerializationName() {
+        return serializationName;
+    }
+
+    public Class<?> getSerializationType() {
+        return serializationType;
     }
 }

@@ -25,25 +25,34 @@
 
 package org.geysermc.geysersettings.common;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.geysermc.geysersettings.common.config.GeyserSettingsConfig;
+import org.geysermc.geysersettings.common.config.KickSettings;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public final class GeyserSettings {
     private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
     private static final String FAILED_SETTINGS = "{\"success\":false}";
 
-    public String sendSettings(Settings settings) {
+    public String sendSettings(List<GeyserSetting> settings) {
         try {
             ObjectNode node = JSON_MAPPER.createObjectNode();
             ObjectNode settingsNode = JSON_MAPPER.createObjectNode();
-            settingsNode.put("disable-bedrock-scaffolding", settings.isDisableScaffolding());
+            for (GeyserSetting setting : settings) {
+                setting.serialize(settingsNode);
+            }
             node.set("settings", settingsNode);
             node.put("success", true);
 
@@ -73,8 +82,22 @@ public final class GeyserSettings {
         fos.close();
     }
 
-    public ServerConfig loadServerConfig(File configFile) throws IOException {
+    public GeyserSettingsConfig loadServerConfig(File configFile) throws IOException {
         ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
-        return yamlMapper.readValue(configFile, ServerConfig.class);
+        JsonNode node = yamlMapper.readTree(configFile);
+        KickSettings kickSettings = new KickSettings(node);
+        List<GeyserSetting> geyserSettings = new ArrayList<>();
+        JsonNode settingsNode = node.get("settings");
+        if (settingsNode != null) {
+            for (Iterator<Map.Entry<String, JsonNode>> it = settingsNode.fields(); it.hasNext(); ) {
+                Map.Entry<String, JsonNode> setting = it.next();
+                GeyserSettingType geyserSetting = GeyserSettingType.ALL_SETTINGS.get(setting.getKey());
+                if (geyserSetting != null) {
+                    geyserSettings.add(new GeyserSetting(geyserSetting, setting.getValue().booleanValue()));
+                }
+            }
+        }
+
+        return new GeyserSettingsConfig(kickSettings, geyserSettings);
     }
 }
